@@ -6,17 +6,13 @@ import yfinance as yf
 import os
 from datetime import datetime
 
-# ------------------------------------------------------
-# 🧠 Title + Introduction
-# ------------------------------------------------------
+
 st.set_page_config(page_title="AI Stock Recommendation System", layout="wide")
-st.title("💹 AI Stock Recommendation System")
+st.title(" AI Stock Recommendation System")
 st.write("Get personalized stock suggestions based on your investment preferences and real-time market data.")
 
 
-# ------------------------------------------------------
-# 🧩 Model + Scaler Loading
-# ------------------------------------------------------
+
 @st.cache_resource
 def load_model_and_scaler():
     base_path = os.path.dirname(os.path.abspath(__file__))
@@ -40,9 +36,7 @@ def load_model_and_scaler():
 scaler, model = load_model_and_scaler()
 
 
-# ------------------------------------------------------
-# ⚙️ Live Data Fetching
-# ------------------------------------------------------
+
 @st.cache_data
 def live_fetch_data(symbols):
     all_data = []
@@ -58,7 +52,6 @@ def live_fetch_data(symbols):
 
             volatality = hist["Close"].pct_change().std()
 
-            # Extract company info with fallbacks
             ceo = ""
             if "companyOfficers" in info and isinstance(info["companyOfficers"], list) and len(info["companyOfficers"]) > 0:
                 ceo = info["companyOfficers"][0].get("name", "")
@@ -73,7 +66,6 @@ def live_fetch_data(symbols):
                 "Description": info.get("longBusinessSummary", "No description available."),
                 "Employees": info.get("fullTimeEmployees", 0),
 
-                # Financial metrics
                 "PE_Ratio": info.get("trailingPE", 0),
                 "EPS": info.get("trailingEps", 0),
                 "ROE": info.get("returnOnEquity", 0) * 100 if info.get("returnOnEquity") else 0,
@@ -97,9 +89,7 @@ def live_fetch_data(symbols):
     return pd.DataFrame(all_data)
 
 
-# ------------------------------------------------------
-# 🧮 Prediction + Recommendation Logic
-# ------------------------------------------------------
+
 def predict_and_recommend(model, scaler, live_df, budget, sector_pref, horizon, target_stock):
     feature_cols = [
         "PE_Ratio", "EPS", "ROE", "DebtToEquity", "Price",
@@ -149,7 +139,7 @@ sector_symbols = {
 
 }
 
-st.subheader("⚙️ Input Parameters")
+st.subheader(" Input Parameters")
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -170,9 +160,7 @@ final_symbols = list(set(default_symbols + custom_symbols))
 st.markdown("---")
 
 
-# ------------------------------------------------------
-# 🚀 Recommendation Generator
-# ------------------------------------------------------
+
 if st.button("🔍 Generate Recommendations"):
     with st.spinner("Fetching live market data..."):
         df = live_fetch_data(final_symbols)
@@ -184,7 +172,7 @@ if st.button("🔍 Generate Recommendations"):
         if recommendations.empty:
             st.warning("No stocks matched your filters.")
         else:
-            st.success("✅ Top Recommended Stocks")
+            st.success(" Top Recommended Stocks")
 
             for _, row in recommendations.iterrows():
                 with st.expander(f"{row['Symbol']} — {row['Company']} (${row['Price']})"):
